@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+
+    <!-- {% load static %}
+
+    <link
+      rel="stylesheet"
+      href="{% static 'post_something_on_homepage/style.css' %}"
+    /> -->
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+
+      *{
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        font-family: 'Poppins', sans-serif;
+      }
+
+      body{
+        background: #000;
+      }
+
+      h2{
+        width: 100%;
+        background: #171717;
+        padding: 20px;
+        margin-bottom: 20px;
+        color: #f1f1f1;
+      }
+
+
+      header{
+        width: 100%;
+        height: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      form{
+        width: 50%;
+        height: 100%;
+        background: #6366f1ff;
+        border-radius: .3em;
+        margin: 0px 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      textarea{
+        width: 60%;
+        height: 40%;
+        border: none;
+        outline: none;
+        padding: 10px;
+        border-radius: .3em;
+        background: #9294f5;
+        color:#000;
+        resize: none;
+      }
+      textarea:focus{
+        background: #9294f5;
+      }
+      input{
+        width: 63%;
+        height: 40px;
+        background: #000;
+        color: #f1f1f1;
+        border-radius: .3em;
+        border: none;
+        outline: none;
+        margin-top: 10px;
+        overflow-y: hidden;
+      }
+      #main{
+        width: 70%;
+        margin: 2vh auto;
+        color:#f1f1f1
+      }
+      #main p{
+        margin: 20px 0;
+        font-weight: 400;
+      }
+      small{
+        opacity: 0.7;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>Post your job idea</h2>
+    <header>
+      <form method="post" action="{% url 'index' %}">
+        {% csrf_token %}
+        <textarea name="content"></textarea>
+        <input type="submit" value="Post" />
+      </form>
+    </header>
+
+    <div id="main">
+      {% for job in jobs %}
+      <p>{{ job.content }}</p>
+      <small>Posted on {{ job.pub_date }}</small>
+      {% endfor %}
+    </div>
+
+    <!-- Javascripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("form").on("submit", function (event) {
+          event.preventDefault();
+
+          var formData = $(this).serialize();
+
+          $.ajax({
+            url: "/",
+            type: "POST",
+            data: formData,
+            success: function (response) {
+              var newJob = $("<p>").text(response.content);
+              var pubDate = $("<small>").text("Posted on " + response.pub_date);
+              $("#main").prepend(newJob, pubDate);
+
+              $("form")[0].reset();
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
